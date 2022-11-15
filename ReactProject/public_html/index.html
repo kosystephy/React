@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tourist Locations</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Language" content="en" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+   
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script> <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/prop-types@15.6/prop-types.js"></script>
+            <script src=https://maps.googleapis.com/maps/api/js?keyAIzaSyBQTdteFVVnpMMhCgAuRBQqPVO05sDxcVY></script> 
+    <style>
+     
+       @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dancing+Script&family=Kalam:wght@700&family=Oleo+Script&family=Rubik+Bubbles&display=swap');
+body{
+     background:#EBEDEF;
+    margin-bottom: 40px;
+         margin-top:40px;
+          margin-left:80px;
+           margin-right:70px;
+/*    font-family: 'Poppins', sans-serif;*/
+   font-color: white;
+   letter-spacing: 4px;
+}
+             #touristDiv
+             {
+                  margin-top:40px;
+                   background-color:white;
+                   border-radius:20px;
+             }
+       #tourismTable
+{
+    width:90%;
+   
+    margin-left:auto;
+    margin-right:auto;
+    border-collapse:collapse;
+}
+
+#tourismTable th
+{
+    text-align: left;
+    background-color:#145A32;
+    color:#fff;
+}
+
+#tourismTable td
+{
+
+    color:#145A32;
+}
+
+#tourismTable th:first-of-type
+{
+    border-top-left-radius:10px;
+}
+
+#tourismTable th:last-of-type
+{
+    border-top-right-radius:10px;
+}
+
+#tourismTable th,
+#tourismTable td
+{
+    padding:5px;
+}
+
+#tourismTable .location
+{
+    text-align:right;
+}
+
+#tourismTable tbody
+{
+    border:thin solid #aaa;
+}
+
+#tourismTable tbody tr:nth-child(odd)
+{
+background-color:#EBEDEF;
+}
+
+#tourismTable tbody tr:hover
+{
+    background-color: #EAFAF1;
+    cursor:pointer;
+}
+
+#tourismTable th:hover
+{
+    cursor:pointer;
+    color:#fff;
+    background-color: #f99;
+    font-weight: bolder;
+}
+
+
+.container{
+   max-width: 1000px;
+  position: relative;
+  margin: auto;
+   background-repeat:no-repeat;
+    background-size:cover;
+       height:100vh;
+     min-height: 80px;
+    padding:5px;
+    
+    margin: 0 auto; max-width: 960px;
+}
+      
+     
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover, .next:hover {
+  background-color: rgba(0,0,0,0.8);
+}
+
+/* Caption text */
+.text {
+  color: #f2f2f2;
+  font-size: 50px;
+  padding: 8px 12px;
+  position: absolute;
+  bottom: 8px;
+  width: 100%;
+  text-align: center;
+}
+.stop{
+     width: 100%;
+   height:90vh;
+    background-image:url( images/mountains.jpg);
+    background-position: center center;
+    -webkit-background-size:cover;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -o-flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    font-size: 2vw;
+   color:white;
+   letter-spacing: 4px;
+   border-radius: 20px;
+  
+     
+}
+
+@keyframes modal_load
+{
+   from 
+   {
+       width: 0%;
+       height:0%
+   }
+   to 
+   {
+       width: 75%;
+       height: 75%
+   }
+}
+
+#modal 
+{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    background-color: rgba(0,0,0, 0.7);
+}
+
+#modalContent 
+{
+    animation: modal_load both 0.2s linear;
+    overflow:hidden;
+    position: absolute;
+    left: 15%;
+    right: 15%;
+    top: 15%;
+    bottom: 15%;
+    margin: auto;
+    background: white;
+    border-radius:10px;
+    padding:5px;
+    border:thin solid #145A32;;
+}
+
+#modalContent h1
+{
+    font-size: 1.5em; 
+    color:#145A32;
+}
+
+#modalContent h2
+{
+    color:#145A32;
+    font-size: 1em; 
+    margin:0px;
+    padding:0px;
+    margin-top: 0.5em;
+}
+
+#modalContent p1
+{
+    font-size: 2em; 
+    margin:0px;
+    padding:0px;
+    width:100%;
+}
+
+#modalContent p
+{
+    font-size: 1.5em; 
+    margin:0px;
+    padding:0px;
+    width:100%;
+}
+
+#modalContent #exitButton
+{
+    position:absolute;
+    top: 5px;
+    right:5px;
+    width:20px;
+    height:20px;
+}
+
+#modalContent #exitButton img
+{
+    width:100%;
+    height:100%;
+}
+
+#modalContent #exitButton img:hover
+{
+    filter:brightness(150%);
+    transform: scale(1.2);
+    cursor:pointer;
+}
+
+#modalContent #flag
+{
+    width:60px;
+    height:40px;
+}
+
+#modalContent #flag img
+{
+    width:100%;
+    height:100%;
+}
+#search
+{
+    background-color: black;
+    color:white;
+}
+#go{
+    display:flex;
+    flex-direction:row;
+    justify-content:space-around;
+    font-size:50px;
+    border-radius:40px;
+    border-color:#145A32;
+    
+}
+footer{
+     background-color:#145A32;
+     color:white;
+     border-radius:20px;
+   margin-top: 20px;
+    
+    
+ }
+ .container-footer
+ {
+      padding-top: 80px;
+     display:flex;
+     flex-direction:row;
+     justify-content:space-around;
+ }
+  .container-footer p
+ {
+   font-family: 'Poppins', sans-serif;
+ }
+ #drop
+ {
+     font-size:20px;
+     color:#145A32;
+ }
+ #carry
+ {
+     border-radius:6px;
+     font-size:50px;
+ }
+         
+      </style>
+
+<script type="text/babel">
+    "use strict"
+
+
+
+
+
+
+    class Tourism extends React.Component {
+
+        constructor(props) {
+            super(props);
+            this.state = {
+                tourism: [],
+            };
+        }
+
+        componentDidMount() {
+            let url = "tourism.json"
+
+            fetch(
+                    url
+                    )
+                    .then(response => response.json())
+                    .then(jsonData => this.setState({tourism: jsonData.results}));
+
+
+
+        }
+
+        render()
+        {
+            console.log(this.state.tourism);
+            let addressregion =
+                    this.state.tourism.map(tourism => tourism.address.addressRegion)
+            console.log(addressregion);
+            let uniqueRegions = [...new Set(addressregion)].sort()
+            uniqueRegions.unshift("All Regions")
+            console.log(uniqueRegions);
+            return (
+                    <div><TourismForm  tourism = {this.state.tourism} addressregion={uniqueRegions}handleAddChange={this.handleAddChange} handleDeleteChange={this.handleDeleteChange}/>
+             </div>
+
+
+                    );
+
+
+
+
+        }
+
+    }
+
+
+    class Modal extends React.Component
+    {
+        static propTypes =
+                {
+                    tourism: PropTypes.object,
+                    closeModal: PropTypes.func
+                }
+
+        static defaultProps =
+                {
+                    tourism: {name: "Error: No array of tourist center passed into name row"},
+                    closeModal: () => console.log("defaultProps ERROR: The 'closeModal' property was not passed into the 'Modal' component")
+
+                }
+
+        constructor(props)
+        {
+            super(props)
+        }
+
+        render()
+        {
+
+
+
+
+            let logo = `https://failtecdn.azureedge.net/failteireland/F%C3%A1ilte_Ireland_Logo_OpenDataAPI.jpg`
+            return(
+                    <div id="modal">
+          <div id="modalContent">
+         <img id="logo" src={logo}/>
+
+           <h1>Name:</h1>
+<p1>({this.props.tourism.name})</p1>
+ 
+ <h2>Telephone:</h2>
+<p>({this.props.tourism.telephone})</p>
+
+    <h2>Location:</h2>
+ <p>({this.props.tourism.address.addressLocality})</p>
+    <h2>Attraction:</h2> 
+    <p>({this.props.tourism.tags})</p>
+
+
+    <div id="exitButton" onClick={this.props.closeModal}><img src="images/exit.jpg"/></div>
+
+</div>
+</div>
+
+                    )
+        }
+    }
+
+
+
+    class TourismRow extends React.Component
+    {
+        static propTypes =
+                {
+                    tourism: PropTypes.object,
+                    addressRegion: PropTypes.string
+
+                }
+
+        static defaultProps =
+                {
+                    tourism: [{name: "defaultProps ERROR: The 'country' property was not passed into the 'CountryRow' component"}],
+                    addressRegion: "defaultProps ERROR: The 'region' property was not passed into the 'CountryRow' component"
+                }
+
+        constructor(props)
+        {
+            super(props)
+
+            this.state = {showModal: false}
+        }
+
+        handleRowClick = e =>
+        {
+            this.toggleModal()
+        }
+
+        toggleModal()
+        {
+            this.setState({showModal: !this.state.showModal})
+        }
+        render()
+        {
+            return(
+                    <tr >
+    <td>{this.state.showModal ? <Modal
+    tourism={this.props.tourism}
+    
+    closeModal = {this.toggleModal.bind(this)}
+    /> : null}
+    {this.props.tourism.name}</td>
+    <td onClick={this.handleRowClick}>{this.props.tourism.telephone}</td>{(this.props.addressRegion === "All Regions") ?
+                    (<td>{this.props.tourism.address.addressRegion}</td>) : null}
+    <td className="location">{this.props.tourism.address.addressLocality}</td>  
+
+   
+</tr>
+                    )
+        }
+    }
+
+
+    const ASCENDING = 1
+    class TourismTable extends React.Component
+    {
+        static propTypes =
+                {
+                    tourism: PropTypes.array,
+                    addressRegion: PropTypes.string
+                }
+
+        static defaultProps =
+                {
+                    tourism: [{name: "Error: No array of names passed into name object"}],
+                    addressregion: "Error: No array of regions passed into regions object"
+                }
+
+        constructor(props)
+        {
+            super(props)
+
+            this.state = {
+                sortDirection: ASCENDING,
+                sortColumn: "name"
+            }
+        }
+
+        static getDerivedStateFromProps(props, state)
+        {
+            if (state.tourism !== props.tourism) // the region has been changed
+            {
+                // reset the sort to be ascending on name
+                const sortColumn = "name"
+                let sortDirection = state.sortDirection
+                if (state.sortColumn === sortColumn)
+                {
+                    sortDirection = -sortDirection
+                } else
+                {
+                    sortDirection = 1
+                }
+
+                props.tourism.sort((a, b) => a[sortColumn] < b[sortColumn] ? -sortDirection : sortDirection)
+            }
+
+            return(state.tourism !== props.tourism ? {tourism: props.tourism, sortDirection: 1, sortColumn: " name"} : null)
+        }
+
+        handleHeaderClick = e =>
+        {
+            const sortColumn = e.target.id
+            let sortDirection = this.state.sortDirection
+            if (this.state.sortColumn === sortColumn)
+            {
+                sortDirection = -sortDirection
+            } else
+            {
+                sortDirection = ASCENDING
+            }
+
+            this.props.tourism.sort((a, b) => a[sortColumn] < b[sortColumn] ? -sortDirection : sortDirection)
+            this.setState({sortDirection: sortDirection, sortColumn: sortColumn})
+        }
+
+        render()
+        {
+            return (
+                    <div>
+                            <table id="tourismTable"> 
+                            <thead>
+                            <tr><th id="name" onClick={this.handleHeaderClick}>Name {(this.state.sortColumn === "name" && this.state.sortDirection === ASCENDING) ? "▲" : null} {(this.state.sortColumn === "name" && this.state.sortDirection === -ASCENDING) ? "▼" : null}</th> 
+                        <th id="telephone" onClick={this.handleHeaderClick}>Telephone {(this.state.sortColumn === "telephone" && this.state.sortDirection === ASCENDING) ? "▲" : null} {(this.state.sortColumn === "telephone" && this.state.sortDirection === -ASCENDING) ? "▼" : null}</th>
+                {(this.props.addressRegion === "All Regions") ? (<th id="region" onClick={this.handleHeaderClick}>Region {(this.state.sortColumn === "region" && this.state.sortDirection === ASCENDING) ? "▲" : null} {(this.state.sortColumn === "region" && this.state.sortDirection === -ASCENDING) ? "▼" : null}</th>) : null}
+                 <th id="location" onClick={this.handleHeaderClick} className="location">Location {(this.state.sortColumn === "location" && this.state.sortDirection === ASCENDING) ? "▲" : null} {(this.state.sortColumn === "location" && this.state.sortDirection === -ASCENDING) ? "▼" : null}</th></tr>
+        </thead> 
+        <tbody>
+        {this.state.tourism.map(tourism => <TourismRow key={tourism.longitude}tourism={tourism} addressRegion={this.props.addressRegion}/>)}   
+            </tbody>                    
+                        </table> 
+</div>
+                    )
+        }
+    }
+
+
+    class DropDownRegionsList extends React.Component
+    {
+        static propTypes =
+                {
+                    addressregion: PropTypes.array,
+                    handleRegionsChange: PropTypes.func
+                }
+
+        static defaultProps =
+                {
+                    addressregion: ["defaultProps ERROR: The 'regions' property was not passed into the 'DropDownRegionsList' component"],
+                    handleRegionsChange: () => console.log("defaultProps ERROR: The 'handleRegionsChange' property was not passed into the 'DropDownRegionsList' component")
+                }
+
+        constructor(props)
+        {
+            super(props)
+        }
+
+        render()
+        {
+            return (
+<select 
+    name="addressregion"  
+    id="drop"
+    onChange={this.props.handleRegionsChange}
+    >                         
+
+    {this.props.addressregion.map(addressRegion => <option key={addressRegion} value={addressRegion}>{addressRegion}</option>)}      
+
+</select>
+                    )
+        }
+    }
+
+
+
+
+    class TourismForm extends React.Component
+    {
+        static propTypes =
+                {
+                    tourism: PropTypes.array,
+                    addressregion: PropTypes.array
+                }
+
+        static defaultProps =
+                {
+                    tourism: ["ERROR: Countries JSON was not passed into CountriesForm"],
+                    addressregion: [{name: "ERROR: Regions JSON was not passed into CountriesForm"}]
+                }
+
+        constructor(props)
+        {
+            super(props)
+
+            this.state = {selectedPlaces: this.props.tourism,
+
+                selectedRegion: "All Regions",
+                selectedChange: ""
+            }
+        }
+
+        handleRegionsChange = e =>
+        {
+            this.setState({selectedRegion: e.target.value})
+            if (e.target.value === "All Regions") // all places
+            {
+                this.setState({selectedPlaces: this.props.tourism})
+            } else  // place from one region
+            {
+                this.setState({selectedPlaces: this.props.tourism.filter(tourism => tourism.address.addressRegion === e.target.value)})
+            }
+        }
+        handleSearchChange = e =>
+        {
+            this.setState({selectedPlaces: this.props.tourism.filter(tourism => (tourism.name.toLowerCase().includes(e.target.value.toLowerCase())))})
+        }
+
+        handleDeleteChange = e => {
+          let deletes = document.getElementById("removeName").value
+                if (deletes.length !== 0) {
+                    this.props.tourism.map((tourism, name) => {
+                        if (tourism.name === deletes) {
+                            this.props.tourism.splice(name, 1)
+                            this.setState(tourism)
+                        }
+                    })
+                }
+                this.setState()
+        }
+
+        handleAddChange = e =>
+        {
+
+            let newName = document.getElementById('addName').value
+            let  newTelephone = document.getElementById('addTelephone').value
+            let  newLongitude = document.getElementById('addLong').value
+            let  newLatitude = document.getElementById('addLat').value
+            let newRegion = document.getElementById('addRegion').value
+            let newLocality = document.getElementById('addLocality').value
+            let tempGeos = {longitude: newLongitude, latitude: newLatitude}
+            let origin = {addressLocality: newLocality, addressRegion: newRegion}
+
+            let newTourism = {name: newName, telephone: newTelephone, geo: tempGeos, address: origin}
+            this.props.tourism.push(newTourism)
+            this.setState(this.props.tourism)
+
+
+
+        }
+
+        handleModifyChange = e =>
+        {
+
+        }
+
+        render()
+        {
+            return (
+<div id="touristDiv">
+                                
+                                <div id="go">
+                                
+                                <DropDownRegionsList  addressregion={this.props.addressregion} handleRegionsChange={this.handleRegionsChange}/>
+                        <input type="search" id="carry" placeholder="Search by name" onChange={this.handleSearchChange}/>
+                         <input type="button" value="Delete" onClick={this.handleDeleteChange} />
+              <input type="button" value="Modify" onClick={this.handleModifyChange} />
+                <input type="button" value="Add" onClick={this.handleAddChange} />
+            </div>
+<h1>{this.state.selectedRegion}</h1>              
+<TourismTable tourism={this.state.selectedPlaces} addressRegion={this.state.selectedRegion} /> 
+<form>
+    <fieldset>
+        <legend>
+            Add</legend>
+        <input type="text" id="addName"/>
+        <input type="text"  id="addTelephone"/>
+        <input type="text"  id="addLong"/>
+        <input type="text"  id="addLat"/>
+        <input type="text" id="addRegion"/>
+        <input type="text" id="addLocation"/>
+      
+    </fieldset>
+    <fieldset>
+        <legend>
+            Modify</legend>
+        <input type="text" id="modifyName"/>
+        <input type="text" id="modifyTelephone"/>
+        <input type="text" id="modifyRegion"/>
+        <input type="text" id="modifyLocation"/>
+     
+    </fieldset>
+
+    <fieldset>
+        <legend>
+            Delete</legend>
+        <input type="text" id="removeName"/>
+
+     
+    </fieldset>
+
+</form>
+</div>
+
+                    )
+        }
+    }
+
+
+
+
+                    </script>
+                    </head>
+<body>
+ <header>
+            
+                 <div class="stop">
+            <h2>  Faitre Ireland </h2>
+         
+            <p>More destinations to Explore</p> 
+
+        </div>   
+
+                  
+                 
+               
+                                                     </header>
+      
+
+<div id="listContainer">
+    
+</div>
+
+  <footer >
+            <div class="container-footer">
+                
+                   <div class="one">
+                    <h3> &copy; 2022 Failte Ireland</h3>
+                    <p>Sign up for our newsletter</p>
+                    <p>Subscribe</p>
+                    
+                </div>
+                   <p>|</p>
+                <div class="two">
+                    <h3>DISCOVER</h3>
+                    <p>Visit Dublin</p>
+                    <p>Wild Atlantic Way</p>
+                    <p>Irelands Hidden Heartlands</p>
+                    <p>Partners</p>
+                </div>
+                <p>|</p>
+                <div class="three">
+                    <h3>USEFUL LINKS</h3>
+                    <p>Contact us</p>
+                    <p>About us</p>
+                    
+                </div>
+                   <p>|</p>
+                <div class="four">
+                    <h3>LEGAL</h3>
+                    <p>terms of Use</p>
+                    <p>Cookie policy</p>
+                    <p>Accessibility</p>
+                </div>
+                
+            </div>
+            
+        </footer> 
+<!-- This code needs to be at the bottom of the BODY element -->
+<script type="text/babel">
+    ReactDOM.render(<Tourism/>, document.getElementById("listContainer"))
+</script>
+
+</body>
+</html>
